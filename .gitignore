@@ -109,4 +109,5 @@ venv.bak/
 !.vscode/extensions.json
 .history
 
-data/*
+data/Historique.1.csv
+data/test-Historique
