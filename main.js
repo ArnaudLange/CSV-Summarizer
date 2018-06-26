@@ -1,71 +1,70 @@
 const fs = require("fs");
 const parse = require("csv-parse");
-const moment = require('moment');
+const moment = require("moment");
+const math = require("math");
+const path = require("path");
 
-const DATA_FILE = "./data/sample.csv";
+const args = process.argv.splice(2);
 
 const transpose = array => {
-  // Calculate the width and height of the Array
-  var width = array.length || 0;
-  var height = array[0] instanceof Array ? array[0].length : 0;
+  const width = array.length || 0;
+  const height = array[0] instanceof Array ? array[0].length : 0;
 
-  // In case it is a zero matrix, no transpose routine needed.
   if (height === 0 || width === 0) {
     return [];
   }
 
-  /**
-   * @var {Number} i Counter
-   * @var {Number} j Counter
-   * @var {Array} t Transposed data is stored in this array.
-   */
-  var i,
-    j,
-    t = [];
+  const i, j, t = [];
 
-  // Loop through every item in the outer array (height)
   for (i = 0; i < height; i++) {
-    // Insert a new row (array)
     t[i] = [];
 
-    // Loop through every item per item in outer array (width)
     for (j = 0; j < width; j++) {
-      // Save transposed data.
       t[i][j] = array[j][i];
     }
   }
-
   return t;
 };
 
 const onlyUnique = (value, index, self) => {
   return self.indexOf(value) === index;
-}
+};
 
-const csvData = [];
-fs.createReadStream(DATA_FILE)
-  .pipe(parse({ delimiter: ";" }))
-  .on("data", csvrow => {
-    console.log(csvrow);
-    csvData.push(csvrow);
-  })
-  .on("end", () => {
-    transpose(csvData).forEach((el, i) => {
-      const filled = el.filter(String);
-      const fillRate = filled.length / el.length;
-      const dist = filled.filter(onlyUnique).length;
-
-      const numberRate = filled.filter(Number).length / filled.length;
-      const momentRate = filled.reduce((p, c) => {
-        return ((moment(c).isValid()) ? p + 1 : 0);
-      }, 0) / filled.length;
-
-      console.log('#########################');
-      console.log('Column: ' + i);
-      console.log('Probable name: ' + el[0]);
-      console.log('\nFilling rate: ' + fillRate);
-      console.log('Number of distinct values: ' + dist);
-      console.log('\n% of numbers: ' + numberRate);
-      console.log('% of valid moment: ' + momentRate);
+args.forEach(dataFile => {
+  const logName = path.basename(dataFile).replace(/\.[^/.]+$/, '.log');
+  const csvData = [];
+  fs.createReadStream(dataFile)
+    .pipe(parse({ delimiter: ";" }))
+    .on("data", csvrow => {
+      csvData.push(csvrow);
     })
-  });
+    .on("end", () => {
+      var stream = fs.createWriteStream('output/' + logName);
+      transpose(csvData).forEach((el, i) => {
+        const filled = el.filter(String);
+        const fillRate = math.round((filled.length * 100) / el.length);
+        const dist = filled.filter(onlyUnique).length;
+
+        const numberRate = math.round(
+          (filled.filter(Number).length * 100) / (filled.length || 1)
+        );
+        const momentRate = math.round(
+          (filled.reduce((p, c) => {
+            return moment(c).isValid() ? p + 1 : 0;
+          }, 0) *
+            100) /
+            (filled.length || 1)
+        );
+
+        stream.write("Column: " + i);
+        stream.write("\nProbable name: " + el[0]);
+        stream.write("\n\nNumber of values: " + el.length);
+        stream.write("\nNumber of filled values: " + filled.length);
+        stream.write("\nFilling rate: " + fillRate + "%");
+        stream.write("\nNumber of distinct values: " + dist);
+        stream.write("\n\n% of numbers: " + numberRate + "%");
+        stream.write("\n% of valid moment: " + momentRate + "%");
+        stream.write("\n\n#########################################\n\n");
+      });
+    });
+});
