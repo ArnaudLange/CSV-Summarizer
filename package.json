@@ -1,0 +1,22 @@
+{
+  "name": "csv-summarizer",
+  "version": "0.1.0",
+  "description": "Small tool to get information about your data",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ArnaudLange/CSV-Summarizer.git"
+  },
+  "keywords": [
+    "ArnaudLange"
+  ],
+  "author": "ArnaudLange",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ArnaudLange/CSV-Summarizer/issues"
+  },
+  "homepage": "https://github.com/ArnaudLange/CSV-Summarizer#readme"
+}
