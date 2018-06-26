@@ -14,7 +14,7 @@ const transpose = array => {
     return [];
   }
 
-  const i, j, t = [];
+  let i = 0, j = 0, t = [];
 
   for (i = 0; i < height; i++) {
     t[i] = [];
