@@ -2,75 +2,118 @@ const fs = require('fs');
 const parse = require('csv-parse');
 const math = require('math');
 const path = require('path');
+const {
+  first,
+  times,
+  isEmpty,
+} = require('lodash/fp');
 
 const files = process.argv.splice(2);
 
-const transpose = array => {
-  const width = array.length || 0;
-  const height = array[0] instanceof Array ? array[0].length : 0;
-
-  if (height === 0 || width === 0) {
-    return [];
-  }
-
-  let i = 0, j = 0, t = [];
-
-  for (i = 0; i < height; i++) {
-    t[i] = [];
-
-    for (j = 0; j < width; j++) {
-      t[i][j] = array[j][i];
-    }
-  }
-  return t;
-};
-
-const onlyUnique = (value, index, self) => {
-  return self.indexOf(value) === index;
-};
-
 const isValidDate = (str) => !isNaN(Date.parse(str));
+
+const isValidNumber = (str) => !isNaN(parseFloat(str));
 
 const getLogName = (filePath) => path
   .basename(filePath)
   .replace(/\.[^/.]+$/, '.log');
 
-files.forEach((filePath) => {
-  const logName = getLogName(filePath);
-  const csvData = [];
+const extractData = (filePath) => new Promise((resolve, reject) => {
+  const data = [];
 
   fs.createReadStream(filePath)
     .pipe(parse({ delimiter: ';' }))
-    .on('data', csvrow => {
-      csvData.push(csvrow);
+    .on('data', row => {
+      data.push(row);
     })
     .on('end', () => {
-      var stream = fs.createWriteStream('output/' + logName);
-      transpose(csvData).forEach((el, i) => {
-        const filled = el.filter(String);
-        const fillRate = math.round((filled.length * 100) / el.length);
-        const dist = filled.filter(onlyUnique).length;
-
-        const numberRate = math.round(
-          (filled.filter(Number).length * 100) / (filled.length || 1)
-        );
-        const dateRate = math.round(
-          (filled.reduce((p, c) => {
-            return isValidDate(c) ? p + 1 : 0;
-          }, 0) *
-            100) /
-            (filled.length || 1)
-        );
-
-        stream.write('Column: ' + i);
-        stream.write('\nProbable name: ' + el[0]);
-        stream.write('\n\nNumber of values: ' + el.length);
-        stream.write('\nNumber of filled values: ' + filled.length);
-        stream.write('\nFilling rate: ' + fillRate + '%');
-        stream.write('\nNumber of distinct values: ' + dist);
-        stream.write('\n\n% of numbers: ' + numberRate + '%');
-        stream.write('\n% of valid date: ' + dateRate + '%');
-        stream.write('\n\n#########################################\n\n');
-      });
-    });
+      resolve(data);
+    })
+    .on('error', reject);
 });
+
+const analyseFile = (data) => {
+  const nbColumns = first(data).length;
+
+  // One analyser for each column
+  const columnAnalysers = times(
+    () => ({
+      name: null,
+      distinctValues: new Set(),
+      nbValues: data.length,
+      nbFilledValues: 0,
+      nbNumbers: 0,
+      nbDates: 0,
+    }),
+    nbColumns,
+  );
+
+  data.forEach((line, lineIndex) => {
+    line.forEach((cell, columnIndex) => {
+      const analyser = columnAnalysers[columnIndex];
+
+      if (lineIndex === 0) {
+        analyser.name = cell;
+      }
+
+      analyser.distinctValues.add(cell);
+
+      if (!isEmpty(cell)) {
+        analyser.nbFilledValues += 1;
+      }
+
+      if (isValidNumber(cell)) {
+        analyser.nbNumbers += 1;
+      }
+
+      if (isValidDate(cell)) {
+        analyser.nbDates += 1;
+      }
+    });
+  });
+
+  return columnAnalysers;
+};
+
+const writeResult = (outputFile, infos) => {
+  const file = fs.createWriteStream(outputFile);
+
+  infos.forEach((columnInfo, columnIndex) => {
+    const fillRate = math.round(
+      (columnInfo.nbFilledValues * 100) / columnInfo.nbValues
+    );
+
+    const numberRate = math.round(
+      (columnInfo.nbNumbers * 100) / columnInfo.nbValues
+    );
+
+    const dateRate = math.round(
+      (columnInfo.nbDates * 100) / columnInfo.nbValues
+    );
+
+    file.write(`Column: ${columnIndex}\n`);
+    file.write(`Probable name: ${columnInfo.name}\n\n`);
+
+    file.write(`Number of values: ${columnInfo.nbValues}\n`);
+    file.write(`Number of filled values: ${columnInfo.nbFilledValues}\n`);
+
+    file.write(`Filling rate: ${fillRate}%\n`);
+    file.write(`Number of distinct values: ${columnInfo.distinctValues.size}\n\n`);
+
+    file.write(`% of valid numbers: ${numberRate}%\n`);
+    file.write(`% of valid dates: ${dateRate}%\n\n`);
+    file.write('#########################################\n\n');
+  });
+};
+
+(async () => {
+  for (filePath of files) {
+    const logName = getLogName(filePath);
+
+    const csvData = await extractData(filePath);
+
+    const columnsInfos = analyseFile(csvData);
+
+    writeResult('output/' + logName, columnsInfos);
+  }
+})();
