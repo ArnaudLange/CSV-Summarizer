@@ -1,8 +1,8 @@
-const fs = require("fs");
-const parse = require("csv-parse");
-const moment = require("moment");
-const math = require("math");
-const path = require("path");
+const fs = require('fs');
+const parse = require('csv-parse');
+const moment = require('moment');
+const math = require('math');
+const path = require('path');
 
 const args = process.argv.splice(2);
 
@@ -34,11 +34,11 @@ args.forEach(dataFile => {
   const logName = path.basename(dataFile).replace(/\.[^/.]+$/, '.log');
   const csvData = [];
   fs.createReadStream(dataFile)
-    .pipe(parse({ delimiter: ";" }))
-    .on("data", csvrow => {
+    .pipe(parse({ delimiter: ';' }))
+    .on('data', csvrow => {
       csvData.push(csvrow);
     })
-    .on("end", () => {
+    .on('end', () => {
       var stream = fs.createWriteStream('output/' + logName);
       transpose(csvData).forEach((el, i) => {
         const filled = el.filter(String);
@@ -56,15 +56,15 @@ args.forEach(dataFile => {
             (filled.length || 1)
         );
 
-        stream.write("Column: " + i);
-        stream.write("\nProbable name: " + el[0]);
-        stream.write("\n\nNumber of values: " + el.length);
-        stream.write("\nNumber of filled values: " + filled.length);
-        stream.write("\nFilling rate: " + fillRate + "%");
-        stream.write("\nNumber of distinct values: " + dist);
-        stream.write("\n\n% of numbers: " + numberRate + "%");
-        stream.write("\n% of valid moment: " + momentRate + "%");
-        stream.write("\n\n#########################################\n\n");
+        stream.write('Column: ' + i);
+        stream.write('\nProbable name: ' + el[0]);
+        stream.write('\n\nNumber of values: ' + el.length);
+        stream.write('\nNumber of filled values: ' + filled.length);
+        stream.write('\nFilling rate: ' + fillRate + '%');
+        stream.write('\nNumber of distinct values: ' + dist);
+        stream.write('\n\n% of numbers: ' + numberRate + '%');
+        stream.write('\n% of valid moment: ' + momentRate + '%');
+        stream.write('\n\n#########################################\n\n');
       });
     });
 });
