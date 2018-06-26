@@ -7,7 +7,7 @@ Filling rate: 100%
 Number of distinct values: 7
 
 % of numbers: 0%
-% of valid moment: 0%
+% of valid date: 0%
 
 #########################################
 
@@ -20,7 +20,7 @@ Filling rate: 86%
 Number of distinct values: 4
 
 % of numbers: 100%
-% of valid moment: 0%
+% of valid date: 0%
 
 #########################################
 
@@ -33,7 +33,7 @@ Filling rate: 86%
 Number of distinct values: 3
 
 % of numbers: 67%
-% of valid moment: 17%
+% of valid date: 17%
 
 #########################################
 
@@ -46,7 +46,7 @@ Filling rate: 71%
 Number of distinct values: 4
 
 % of numbers: 0%
-% of valid moment: 60%
+% of valid date: 60%
 
 #########################################
 

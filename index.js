@@ -1,6 +1,5 @@
 const fs = require('fs');
 const parse = require('csv-parse');
-const moment = require('moment');
 const math = require('math');
 const path = require('path');
 
@@ -30,6 +29,8 @@ const onlyUnique = (value, index, self) => {
   return self.indexOf(value) === index;
 };
 
+const isValidDate = (str) => !isNaN(Date.parse(str));
+
 const getLogName = (filePath) => path
   .basename(filePath)
   .replace(/\.[^/.]+$/, '.log');
@@ -53,9 +54,9 @@ files.forEach((filePath) => {
         const numberRate = math.round(
           (filled.filter(Number).length * 100) / (filled.length || 1)
         );
-        const momentRate = math.round(
+        const dateRate = math.round(
           (filled.reduce((p, c) => {
-            return moment(c).isValid() ? p + 1 : 0;
+            return isValidDate(c) ? p + 1 : 0;
           }, 0) *
             100) /
             (filled.length || 1)
@@ -68,7 +69,7 @@ files.forEach((filePath) => {
         stream.write('\nFilling rate: ' + fillRate + '%');
         stream.write('\nNumber of distinct values: ' + dist);
         stream.write('\n\n% of numbers: ' + numberRate + '%');
-        stream.write('\n% of valid moment: ' + momentRate + '%');
+        stream.write('\n% of valid date: ' + dateRate + '%');
         stream.write('\n\n#########################################\n\n');
       });
     });
