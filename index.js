@@ -30,11 +30,15 @@ const onlyUnique = (value, index, self) => {
   return self.indexOf(value) === index;
 };
 
-files.forEach(dataFile => {
-  const logName = path.basename(dataFile).replace(/\.[^/.]+$/, '.log');
+const getLogName = (filePath) => path
+  .basename(filePath)
+  .replace(/\.[^/.]+$/, '.log');
+
+files.forEach((filePath) => {
+  const logName = getLogName(filePath);
   const csvData = [];
 
-  fs.createReadStream(dataFile)
+  fs.createReadStream(filePath)
     .pipe(parse({ delimiter: ';' }))
     .on('data', csvrow => {
       csvData.push(csvrow);
