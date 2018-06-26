@@ -4,7 +4,7 @@ const moment = require('moment');
 const math = require('math');
 const path = require('path');
 
-const args = process.argv.splice(2);
+const files = process.argv.splice(2);
 
 const transpose = array => {
   const width = array.length || 0;
@@ -30,9 +30,10 @@ const onlyUnique = (value, index, self) => {
   return self.indexOf(value) === index;
 };
 
-args.forEach(dataFile => {
+files.forEach(dataFile => {
   const logName = path.basename(dataFile).replace(/\.[^/.]+$/, '.log');
   const csvData = [];
+
   fs.createReadStream(dataFile)
     .pipe(parse({ delimiter: ';' }))
     .on('data', csvrow => {
