@@ -6,8 +6,8 @@ Number of filled values: 7
 Filling rate: 100%
 Number of distinct values: 7
 
-% of numbers: 0%
-% of valid date: 0%
+% of valid numbers: 0%
+% of valid dates: 0%
 
 #########################################
 
@@ -17,10 +17,10 @@ Probable name: 1
 Number of values: 7
 Number of filled values: 6
 Filling rate: 86%
-Number of distinct values: 4
+Number of distinct values: 5
 
-% of numbers: 100%
-% of valid date: 0%
+% of valid numbers: 86%
+% of valid dates: 71%
 
 #########################################
 
@@ -30,10 +30,10 @@ Probable name: 455.2
 Number of values: 7
 Number of filled values: 6
 Filling rate: 86%
-Number of distinct values: 3
+Number of distinct values: 4
 
-% of numbers: 67%
-% of valid date: 17%
+% of valid numbers: 86%
+% of valid dates: 57%
 
 #########################################
 
@@ -43,10 +43,10 @@ Probable name: 10-10-10
 Number of values: 7
 Number of filled values: 5
 Filling rate: 71%
-Number of distinct values: 4
+Number of distinct values: 5
 
-% of numbers: 0%
-% of valid date: 60%
+% of valid numbers: 57%
+% of valid dates: 57%
 
 #########################################
 

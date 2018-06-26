@@ -22,6 +22,7 @@
   "dependencies": {
     "csv-parse": "^2.5.0",
     "inherits": "^2.0.3",
+    "lodash": "^4.17.10",
     "math": "0.0.3"
   }
 }
