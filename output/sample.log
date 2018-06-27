@@ -2,12 +2,17 @@ Column: 0
 Probable name: test
 
 Number of values: 7
+
 Number of filled values: 7
 Filling rate: 100%
+
 Number of distinct values: 7
 
 % of valid numbers: 0%
+% of valid numbers (among filled values): 0%
+
 % of valid dates: 0%
+% of valid dates(among filled values): 0%
 
 #########################################
 
@@ -15,12 +20,17 @@ Column: 1
 Probable name: 1
 
 Number of values: 7
+
 Number of filled values: 6
 Filling rate: 86%
+
 Number of distinct values: 5
 
 % of valid numbers: 86%
+% of valid numbers (among filled values): 100%
+
 % of valid dates: 71%
+% of valid dates(among filled values): 83%
 
 #########################################
 
@@ -28,12 +38,17 @@ Column: 2
 Probable name: 455.2
 
 Number of values: 7
+
 Number of filled values: 6
 Filling rate: 86%
+
 Number of distinct values: 4
 
 % of valid numbers: 86%
+% of valid numbers (among filled values): 100%
+
 % of valid dates: 57%
+% of valid dates(among filled values): 67%
 
 #########################################
 
@@ -41,12 +56,17 @@ Column: 3
 Probable name: 10-10-10
 
 Number of values: 7
+
 Number of filled values: 5
 Filling rate: 71%
+
 Number of distinct values: 5
 
 % of valid numbers: 57%
+% of valid numbers (among filled values): 80%
+
 % of valid dates: 57%
+% of valid dates(among filled values): 80%
 
 #########################################
 
