@@ -2,8 +2,7 @@ import pandas as pd
 import numpy as np
 from dateutil.parser import parse
 
-df = pd.read_csv('./data/test-historique.csv', sep=';', header=None)
-df = df.applymap(str)
+df = pd.read_csv('./data/sample.csv', sep=';', header=None)
 
 def isDate(string):
     try:
@@ -27,6 +26,7 @@ for column in df:
 
     nbValues = len(currentCol)
     nbFilledValues = currentCol.count()
+    print("Allo: " + str(nbFilledValues))
 
     fillRate = int(np.round((nbFilledValues * 100) / nbValues))
 
@@ -37,9 +37,9 @@ for column in df:
     numberFilledRate = int(np.round((currentCol.apply(
         lambda s: (isNumber(s))).sum() * 100) / nbFilledValues))
 
-    dateRate = int(np.round((currentCol.apply(
+    dateRate = int(np.round((currentCol.astype(dtype = 'str').apply(
         lambda s: (isDate(s))).sum() * 100) / nbValues))
-    dateFilledRate = int(np.round((currentCol.apply(
+    dateFilledRate = int(np.round((currentCol.astype(dtype = 'str').apply(
         lambda s: (isDate(s))).sum() * 100) / nbFilledValues))
 
 
@@ -59,4 +59,3 @@ for column in df:
     print("% of valid dates: " + str(dateRate) + "%")
     print("% of valid dates (among filled values): " +
           str(dateFilledRate) + "%")
-
