@@ -1,8 +1,10 @@
 import pandas as pd
 import numpy as np
+import sys
 from dateutil.parser import parse
 
-df = pd.read_csv('./data/sample.csv', sep=';', header=None)
+files = sys.argv[1:]
+
 
 def isDate(string):
     try:
@@ -10,6 +12,7 @@ def isDate(string):
         return True
     except ValueError:
         return False
+
 
 def isNumber(s):
     try:
@@ -19,43 +22,45 @@ def isNumber(s):
     return False
 
 
-for column in df:
-    currentCol = df[column]
-    print("-------------")
-    print("Column: " + str(column))
+for file in files:
+    df = pd.read_csv(file, sep=';', header=None)
 
-    nbValues = len(currentCol)
-    nbFilledValues = currentCol.count()
-    print("Allo: " + str(nbFilledValues))
+    for column in df:
+        currentCol = df[column]
+        print("-------------")
+        print("Column: " + str(column))
 
-    fillRate = int(np.round((nbFilledValues * 100) / nbValues))
+        nbValues = len(currentCol)
+        nbFilledValues = currentCol.count()
+        print("Allo: " + str(nbFilledValues))
 
-    distinctValues = currentCol.nunique(dropna = False)
+        fillRate = int(np.round((nbFilledValues * 100) / nbValues))
 
-    numberRate = int(np.round((currentCol.apply(
-        lambda s: (isNumber(s))).sum() * 100) / nbValues))
-    numberFilledRate = int(np.round((currentCol.apply(
-        lambda s: (isNumber(s))).sum() * 100) / nbFilledValues))
+        distinctValues = currentCol.nunique(dropna=False)
 
-    dateRate = int(np.round((currentCol.astype(dtype = 'str').apply(
-        lambda s: (isDate(s))).sum() * 100) / nbValues))
-    dateFilledRate = int(np.round((currentCol.astype(dtype = 'str').apply(
-        lambda s: (isDate(s))).sum() * 100) / nbFilledValues))
+        numberRate = int(np.round((currentCol.apply(
+            lambda s: (isNumber(s))).sum() * 100) / nbValues))
+        numberFilledRate = int(np.round((currentCol.apply(
+            lambda s: (isNumber(s))).sum() * 100) / nbFilledValues))
 
+        dateRate = int(np.round((currentCol.astype(dtype='str').apply(
+            lambda s: (isDate(s))).sum() * 100) / nbValues))
+        dateFilledRate = int(np.round((currentCol.astype(dtype='str').apply(
+            lambda s: (isDate(s))).sum() * 100) / nbFilledValues))
 
-    print("Probable name: " + str(currentCol[0]))
+        print("Probable name: " + str(currentCol[0]))
 
-    print("Number of values: " + str(nbValues))
+        print("Number of values: " + str(nbValues))
 
-    print("Number of filled values: " + str(nbFilledValues))
-    print("Filling rate: " + str(fillRate) + "%")
+        print("Number of filled values: " + str(nbFilledValues))
+        print("Filling rate: " + str(fillRate) + "%")
 
-    print("Number of distinct values: " + str(distinctValues))
+        print("Number of distinct values: " + str(distinctValues))
 
-    print("% of valid numbers: " + str(numberRate) + "%")
-    print("% of valid numbers (among filled values): " +
-          str(numberFilledRate) + "%")
+        print("% of valid numbers: " + str(numberRate) + "%")
+        print("% of valid numbers (among filled values): " +
+              str(numberFilledRate) + "%")
 
-    print("% of valid dates: " + str(dateRate) + "%")
-    print("% of valid dates (among filled values): " +
-          str(dateFilledRate) + "%")
+        print("% of valid dates: " + str(dateRate) + "%")
+        print("% of valid dates (among filled values): " +
+              str(dateFilledRate) + "%")
